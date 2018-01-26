@@ -19,3 +19,9 @@ jseMiniTree: jseMiniTree.cpp
 jseMergeTrees: jseMergeTrees.cpp
 	$(CC) -Wall $(INCLUDES) -o jseMergeTrees jseMergeTrees.cpp $(ROOTFLAG) $(EXTRALIBS)
 
+jseDrawStuff: jseDrawStuff.cpp jseDataset.o
+	$(CC) -Wall $(INCLUDES) -o jseDrawStuff jseDrawStuff.cpp jseDataset.o $(ROOTFLAG) $(EXTRALIBS)
+
+
+jseDataset.o: ../interface/jseDataset.h ../src/jseDataset.cc
+	$(CC) -Wall $(INCLUDES) -c ../src/jseDataset.cc $(ROOTFLAG) $(EXTRALIBS)
