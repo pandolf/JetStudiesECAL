@@ -16,3 +16,6 @@ EXTRALIBS := -L$(ROOTSYS)/lib -L$(ROOFIT_LIBDIR)/ -L$(CMSSW_BASE)/lib/slc6_amd64
 jseMiniTree: jseMiniTree.cpp
 	$(CC) -Wall $(INCLUDES) -o jseMiniTree jseMiniTree.cpp $(ROOTFLAG) $(EXTRALIBS)
 
+jseMergeTrees: jseMergeTrees.cpp
+	$(CC) -Wall $(INCLUDES) -o jseMergeTrees jseMergeTrees.cpp $(ROOTFLAG) $(EXTRALIBS)
+
