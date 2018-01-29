@@ -20,7 +20,6 @@ class jseDataset {
   std::string prettyName;
 
   TFile* file;
-  TTree* tree;
 
 
  private:

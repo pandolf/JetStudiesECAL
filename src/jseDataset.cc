@@ -8,7 +8,6 @@ jseDataset::jseDataset( const std::string& a_prodName, const std::string& a_name
   name = a_name;
   prettyName = a_prettyName;
 
-  file = TFile::Open( Form("%s/miniTrees/%s.root", prodName.c_str(), name.c_str()) );
-  tree = (TTree*)file->Get("mt2");
+  file = TFile::Open( Form("%s/histoFiles/%s.root", prodName.c_str(), name.c_str()) );
 
 }
