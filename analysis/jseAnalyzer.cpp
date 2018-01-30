@@ -76,7 +76,7 @@ int main( int argc, char* argv[] ) {
   outfile->cd();
 
   TH1D* h1_nVertex = new TH1D( "nVertex", "", 51, -0.5, 50.5); 
-  TH1D* h1_rho     = new TH1D( "rho", "", 20, 0., 20.); 
+  TH1D* h1_rho     = new TH1D( "rho", "", 100, 0., 100.); 
 
   float etaMax = 3.2;
   int nBins_eta = 64;
