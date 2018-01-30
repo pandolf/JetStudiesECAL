@@ -13,6 +13,7 @@
 
 
 
+void drawAllPlots( const std::vector< jseDataset* >& datasets, const std::string& prodName, const std::string& comparisonName );
 void drawProfileVsEta( const std::string& outdir, std::vector< jseDataset* > datasets, const std::string& varName, const std::string& axisName, float yMin, float yMax );
 void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*> datasets );
 std::vector<TH1D*> getHistoVector( const std::string& name, const std::vector<float>& ptBins, const std::vector<float>& etaBins );
@@ -31,25 +32,41 @@ int main( int argc, char* argv[] ) {
  
   std::string prodName(argv[1]);
 
-  std::string outdir( Form("%s/plots/", prodName.c_str()) );
 
-  system( Form("mkdir -p %s", outdir.c_str()) );
-
-  //RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SROFF
-  //RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SROFF_noPU
-  //RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SRON
-  //RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF
-  //RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF_noPU
   std::vector< jseDataset* > datasets;
-  datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SRON" , "GRv2 SR@PF:ON"  ) );
-  datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF", "GRv2 SR@PF:OFF" ) );
+  datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SRON" , "SR@PF:ON"  ) );
+  datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF", "SR@PF:OFF" ) );
 
-  drawProfileVsEta( outdir, datasets, "phEF", "Jet Photon Energy Fraction", 0., 0.5 );
+  drawAllPlots( datasets, prodName, "SRON_vs_SROFF" );
 
+  std::vector< jseDataset* > datasets2;
+  datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF", "SR@PF:OFF"  ) );
+  datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF_noPU", "SR@PF:OFF noPU" ) );
 
-  drawResponseResolution( outdir, datasets );
+  drawAllPlots( datasets2, prodName, "PU_vs_noPU" );
+
+  std::vector< jseDataset* > datasets3;
+  datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SRON", "ECALnoise:OFF SR@PF:ON") );
+  datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SROFF", "ECALnoise:OFF SR@PF:OFF") );
+  datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SROFF_noPU", "ECALnoise:OFF SR@PF:OFF noPU") );
+
+  drawAllPlots( datasets3, prodName, "ECALnoiseOFF" );
 
   return 0;
+
+}
+
+
+void drawAllPlots( const std::vector< jseDataset* >& datasets, const std::string& prodName, const std::string& comparisonName ) {
+
+  std::string outdir( Form("%s/plots/%s", prodName.c_str(), comparisonName.c_str()) );
+  system( Form("mkdir -p %s", outdir.c_str()) );
+
+  drawProfileVsEta( outdir, datasets, "phEF", "Jet Photon Energy Fraction", 0., 0.5 );
+  drawProfileVsEta( outdir, datasets, "nhEF", "Jet Neutral Hadron Energy Fraction", 0., 0.3 );
+  drawProfileVsEta( outdir, datasets, "chEF", "Jet Charged Hadron Energy Fraction", 0., 0.85 );
+
+  drawResponseResolution( outdir, datasets );
 
 }
 
@@ -71,8 +88,8 @@ void drawProfileVsEta( const std::string& outdir, std::vector< jseDataset* > dat
   h2_axes->SetYTitle(axisName.c_str());
   h2_axes->Draw();
 
-  TLegend* legend = new TLegend( 0.3, 0.2, 0.7, 0.4 );
-  legend->SetTextSize(0.038);
+  TLegend* legend = new TLegend( 0.3, 0.15, 0.7, 0.35 );
+  legend->SetTextSize(0.035);
   legend->SetFillColor(0);
 
   for( unsigned i=0; i<datasets.size(); ++i ) {
@@ -126,7 +143,7 @@ void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*>
     TCanvas* c1_resp = new TCanvas( "c1_resp", "", 600, 600 );
     c1_resp->cd();
 
-    TH2D* h2_axes_resp = new TH2D( "axes_resp", "", 10, xMin, xMax, 10, 0.5, 1.1 );
+    TH2D* h2_axes_resp = new TH2D( "axes_resp", "", 10, xMin, xMax, 10, 0.75, 1.3 );
     h2_axes_resp->SetXTitle( "Jet #eta" );
     h2_axes_resp->SetYTitle( "Jet Response" );
     h2_axes_resp->Draw();
@@ -145,7 +162,7 @@ void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*>
 
     TH2D* h2_axes_reso = new TH2D( "axes_reso", "", 10, xMin, xMax, 10, 0., 0.5 );
     h2_axes_reso->SetXTitle( "Jet #eta" );
-    h2_axes_reso->SetYTitle( "Jet Response" );
+    h2_axes_reso->SetYTitle( "Jet Resolution" );
     h2_axes_reso->Draw();
 
     TLegend* legend_reso = new TLegend( 0.3, 0.7, 0.7, 0.9, ptText.c_str() );
