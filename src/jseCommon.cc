@@ -121,6 +121,7 @@ std::vector<float> jseCommon::etaBins() {
   etaBins.push_back( -2.0 );
   etaBins.push_back( -1.6 );
   etaBins.push_back( -1.4 );
+  //etaBins.push_back( -1.0 );
   etaBins.push_back( -0.5 );
   etaBins.push_back(  0.0 );
 
@@ -221,6 +222,20 @@ int jseCommon::findBin( float value, const std::vector<float> bins, bool overflo
   }
 
   return iBin;
+
+}
+
+
+std::vector<int> jseCommon::colors() {
+
+  std::vector<int> colors;
+  
+  colors.push_back( 38 );
+  colors.push_back( 46 );
+  colors.push_back( 29 );
+  colors.push_back( kGray+1 );
+
+  return colors;
 
 }
 

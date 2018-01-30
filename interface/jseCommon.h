@@ -33,7 +33,7 @@ class jseCommon {
   static int findBin( float value, const std::vector<float> bins, bool overflow=true );
   static void symmetrize( std::vector<float>& vec );
 
-
+  static std::vector<int> colors();
 
 };
 
