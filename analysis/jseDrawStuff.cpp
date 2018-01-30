@@ -15,7 +15,7 @@
 
 void drawAllPlots( const std::vector< jseDataset* >& datasets, const std::string& prodName, const std::string& comparisonName );
 void drawProfileVsEta( const std::string& outdir, std::vector< jseDataset* > datasets, const std::string& varName, const std::string& axisName, float yMin, float yMax );
-void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*> datasets );
+void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*> datasets, const std::string& suffix="" );
 std::vector<TH1D*> getHistoVector( const std::string& name, const std::vector<float>& ptBins, const std::vector<float>& etaBins );
 TH1D* getTruncatedHisto( TH1D* h1, float frac );
 
@@ -75,6 +75,7 @@ void drawAllPlots( const std::vector< jseDataset* >& datasets, const std::string
   drawProfileVsEta( outdir, datasets, "chEF", "Jet Charged Hadron Energy Fraction", 0., 0.85 );
 
   drawResponseResolution( outdir, datasets );
+  drawResponseResolution( outdir, datasets, "Raw" );
 
 }
 
@@ -124,7 +125,7 @@ void drawProfileVsEta( const std::string& outdir, std::vector< jseDataset* > dat
 
 
 
-void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*> datasets ) {
+void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*> datasets, const std::string& suffix  ) {
 
 
   std::vector<float> ptBins  = jseCommon::ptBins();
@@ -181,18 +182,18 @@ void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*>
 
       TFile* file = datasets[iDataset]->file;
 
-      std::string respDir( Form("%s/resp/%s", outdir.c_str(), datasets[iDataset]->name.c_str()) );
+      std::string respDir( Form("%s/resp%s/%s", outdir.c_str(), suffix.c_str(), datasets[iDataset]->name.c_str()) );
 
       if( iPt==0 )
         system( Form("mkdir -p %s", respDir.c_str()) );
 
 
-      TH1D* h1_resp_vs_eta = new TH1D( Form("resp_vs_eta_%s_pt%d", datasets[iDataset]->name.c_str(), iPt), "", etaBins.size()-1, etaBins_lower );
-      TH1D* h1_reso_vs_eta = new TH1D( Form("reso_vs_eta_%s_pt%d", datasets[iDataset]->name.c_str(), iPt), "", etaBins.size()-1, etaBins_lower );
+      TH1D* h1_resp_vs_eta = new TH1D( Form("resp%s_vs_eta_%s_pt%d", suffix.c_str(), datasets[iDataset]->name.c_str(), iPt), "", etaBins.size()-1, etaBins_lower );
+      TH1D* h1_reso_vs_eta = new TH1D( Form("reso%s_vs_eta_%s_pt%d", suffix.c_str(), datasets[iDataset]->name.c_str(), iPt), "", etaBins.size()-1, etaBins_lower );
 
       for( unsigned iEta=0; iEta<etaBins.size()-1; ++iEta ) {
 
-        std::string thisHistoName( jseCommon::getPtEtaHistoName( "resp", iPt, iEta ) ); 
+        std::string thisHistoName( jseCommon::getPtEtaHistoName( Form("resp%s", suffix.c_str()), iPt, iEta ) ); 
         TH1D* h1_response = (TH1D*)file->Get( thisHistoName.c_str() );
         float truncFrac = 0.99;
         TH1D* h1_responseTrunc = getTruncatedHisto( h1_response, truncFrac );
@@ -205,7 +206,10 @@ void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*>
         TCanvas* c1 = new TCanvas( "c1", "", 600, 600 );
         c1->cd();
 
-        TH2D* h2_axes = new TH2D("axes", "", 10, xMin, xMax, 10, 0., 1.2*h1_response->GetMaximum());
+        float yMin = 0.;
+        float yMax = 1.2*h1_response->GetMaximum();
+
+        TH2D* h2_axes = new TH2D("axes", "", 10, xMin, xMax, 10, yMin, yMax);
         h2_axes->SetXTitle( "Reco p_{T} / Gen p_{T}" );
         h2_axes->SetYTitle( "Entries" );
         h2_axes->Draw();
@@ -219,48 +223,66 @@ void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*>
         h1_responseTrunc->SetLineColor(46);
         h1_responseTrunc->SetLineWidth(2);
 
-        TLegend* legend = new TLegend( 0.7, 0.75, 0.9, 0.9 );
-        legend->SetFillColor(0);
-        legend->SetTextSize(0.035);
-        legend->AddEntry( h1_response, "All", "F" );
-        legend->AddEntry( h1_responseTrunc, Form("%.1f%%", truncFrac*100.), "F" );
-        legend->Draw("same");
-       
-        h1_response->Draw("same");
-        h1_responseTrunc->Draw("same");
+        //TLegend* legend = new TLegend( 0.7, 0.75, 0.9, 0.9 );
+        //legend->SetFillColor(0);
+        //legend->SetTextSize(0.035);
+        //legend->AddEntry( h1_response, "All", "F" );
+        //legend->AddEntry( h1_responseTrunc, Form("%.1f%%", truncFrac*100.), "F" );
+        //legend->Draw("same");
 
+        float mean    = h1_responseTrunc->GetMean();
+        float meanErr = h1_responseTrunc->GetMeanError();
+        float rms     = h1_responseTrunc->GetRMS();
+        float rmsErr  = h1_responseTrunc->GetRMSError();
+
+        float reso = rms/mean;
+        float resoErr = sqrt( rmsErr*rmsErr/(mean*mean) + meanErr*meanErr*rms*rms/(mean*mean*mean*mean) );
+        
+        TLine* lineResp = new TLine( mean, yMin, mean, yMax );
+        lineResp->SetLineColor( 46 );
+        lineResp->Draw("same");
+        
         TPaveText* labelTop = jseCommon::getLabelTopSimulation();
         labelTop->Draw("same");
 
-        TPaveText* labelEta = new TPaveText( 0.65, 0.65, 0.9, 0.7, "brNDC" );
+        TPaveText* labelEta = new TPaveText( 0.65, 0.85, 0.9, 0.9, "brNDC" );
         labelEta->SetTextSize( 0.035 );
         labelEta->SetFillColor(0);
         labelEta->AddText( Form("%.1f < #eta < %.1f", etaBins[iEta], etaBins[iEta+1]) );
         labelEta->Draw("same");
 
-        TPaveText* labelPt = new TPaveText( 0.65, 0.6, 0.9, 0.65, "brNDC" );
+        TPaveText* labelPt = new TPaveText( 0.65, 0.8, 0.9, 0.85, "brNDC" );
         labelPt->SetTextSize( 0.035 );
         labelPt->SetFillColor(0);
         labelPt->AddText( Form("%.0f < p_{T} < %.0f GeV", ptBins[iPt], ptBins[iPt+1]) );
         labelPt->Draw("same");
 
+        TPaveText* labelResp = new TPaveText( 0.65, 0.65, 0.9, 0.75, "brNDC" );
+        labelResp->SetTextSize( 0.035 );
+        labelResp->SetFillColor(0);
+        labelResp->AddText( Form("Mean = %.2f", mean) );
+        labelResp->AddText( Form("RMS = %.2f", rms) );
+        labelResp->Draw("same");
+
+        h1_response->Draw("same");
+        h1_responseTrunc->Draw("same");
+
         gPad->RedrawAxis();
   
         if( !noEPS )
-          c1->SaveAs( Form("%s/resp_pt%d_eta%d.eps", respDir.c_str(), iPt, iEta) );
-        c1->SaveAs( Form("%s/resp_pt%d_eta%d.pdf", respDir.c_str(), iPt, iEta) );
+          c1->SaveAs( Form("%s/resp%s_pt%d_eta%d.eps", respDir.c_str(), suffix.c_str(), iPt, iEta) );
+        c1->SaveAs( Form("%s/resp%s_pt%d_eta%d.pdf", respDir.c_str(), suffix.c_str(), iPt, iEta) );
 
         delete c1;
         delete h2_axes;
-        delete legend;
 
         // end plotting 
 
-        h1_resp_vs_eta->SetBinContent( iEta+1, h1_responseTrunc->GetMean() );
-        h1_resp_vs_eta->SetBinError  ( iEta+1, h1_responseTrunc->GetMeanError() );
+        h1_resp_vs_eta->SetBinContent( iEta+1, mean );
+        h1_resp_vs_eta->SetBinError  ( iEta+1, meanErr );
 
-        h1_reso_vs_eta->SetBinContent( iEta+1, h1_responseTrunc->GetRMS() );
-        h1_reso_vs_eta->SetBinError  ( iEta+1, h1_responseTrunc->GetRMSError() );
+        h1_reso_vs_eta->SetBinContent( iEta+1, reso );
+        h1_reso_vs_eta->SetBinError  ( iEta+1, resoErr );
 
         delete h1_responseTrunc;
  
@@ -286,7 +308,6 @@ void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*>
 
       legend_reso->AddEntry( h1_reso_vs_eta, datasets[iDataset]->prettyName.c_str(), "P" );
 
-
     } // dataset
 
     c1_resp->cd();
@@ -297,8 +318,8 @@ void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*>
     gPad->RedrawAxis();
 
     if( !noEPS )
-      c1_resp->SaveAs( Form( "%s/resp_vs_eta_pt%d.eps", outdir.c_str(), iPt ) );
-    c1_resp->SaveAs( Form( "%s/resp_vs_eta_pt%d.pdf", outdir.c_str(), iPt ) );
+      c1_resp->SaveAs( Form( "%s/resp%s_vs_eta_pt%d.eps", outdir.c_str(), suffix.c_str(), iPt ) );
+    c1_resp->SaveAs( Form( "%s/resp%s_vs_eta_pt%d.pdf", outdir.c_str(), suffix.c_str(), iPt ) );
 
     c1_reso->cd();
 
@@ -307,8 +328,8 @@ void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*>
     gPad->RedrawAxis();
 
     if( !noEPS )
-      c1_reso->SaveAs( Form( "%s/reso_vs_eta_pt%d.eps", outdir.c_str(), iPt ) );
-    c1_reso->SaveAs( Form( "%s/reso_vs_eta_pt%d.pdf", outdir.c_str(), iPt ) );
+      c1_reso->SaveAs( Form( "%s/reso%s_vs_eta_pt%d.eps", outdir.c_str(), suffix.c_str(), iPt ) );
+    c1_reso->SaveAs( Form( "%s/reso%s_vs_eta_pt%d.pdf", outdir.c_str(), suffix.c_str(), iPt ) );
 
     delete c1_reso;
     delete c1_resp;
