@@ -104,6 +104,7 @@ std::vector<float> jseCommon::ptBins() {
   ptBins.push_back( 130. );
   ptBins.push_back( 250. );
   ptBins.push_back( 500. );
+  ptBins.push_back( 13000. );
 
   return ptBins;
 
