@@ -90,7 +90,6 @@ int main( int argc, char* argv[] ) {
   std::vector<float> ptBins  = jseCommon::ptBins();
   std::vector<float> etaBins = jseCommon::etaBins();
 
-
   std::map< std::string, TH1D* > map_resp;
 
   for(unsigned iPt=0; iPt<ptBins.size()-1; ++iPt) {
