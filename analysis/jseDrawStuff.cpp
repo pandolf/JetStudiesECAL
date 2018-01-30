@@ -42,21 +42,21 @@ int main( int argc, char* argv[] ) {
   }
 
   std::vector< jseDataset* > datasets;
-  datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SRON" , "SR@PF:ON"  ) );
-  datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF", "SR@PF:OFF" ) );
+  datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SRON" , "SR:ON"  ) );
+  datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF", "SR:OFF" ) );
 
   drawAllPlots( datasets, prodName, "SRON_vs_SROFF" );
 
   std::vector< jseDataset* > datasets2;
-  datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF", "SR@PF:OFF"  ) );
-  datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF_noPU", "SR@PF:OFF noPU" ) );
+  datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF", "SR:OFF"  ) );
+  datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF_noPU", "SR:OFF noPU" ) );
 
   drawAllPlots( datasets2, prodName, "PU_vs_noPU" );
 
   std::vector< jseDataset* > datasets3;
-  datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SRON", "ECALnoise:OFF SR@PF:ON") );
-  datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SROFF", "ECALnoise:OFF SR@PF:OFF") );
-  datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SROFF_noPU", "ECALnoise:OFF SR@PF:OFF noPU") );
+  datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SRON", "ECALnoise:OFF SR:ON") );
+  datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SROFF", "ECALnoise:OFF SR:OFF") );
+  datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SROFF_noPU", "ECALnoise:OFF SR:OFF noPU") );
 
   drawAllPlots( datasets3, prodName, "ECALnoiseOFF" );
 
@@ -71,7 +71,7 @@ void drawAllPlots( const std::vector< jseDataset* >& datasets, const std::string
   system( Form("mkdir -p %s", outdir.c_str()) );
 
   drawProfileVsEta( outdir, datasets, "phEF", "Jet Photon Energy Fraction", 0., 0.5 );
-  drawProfileVsEta( outdir, datasets, "nhEF", "Jet Neutral Hadron Energy Fraction", 0., 0.3 );
+  drawProfileVsEta( outdir, datasets, "nhEF", "Jet Neutral Hadron Energy Fraction", -0.1, 0.3 );
   drawProfileVsEta( outdir, datasets, "chEF", "Jet Charged Hadron Energy Fraction", 0., 0.85 );
 
   drawResponseResolution( outdir, datasets );
@@ -82,9 +82,7 @@ void drawAllPlots( const std::vector< jseDataset* >& datasets, const std::string
 void drawProfileVsEta( const std::string& outdir, std::vector< jseDataset* > datasets, const std::string& varName, const std::string& axisName, float yMin, float yMax ) {
 
 
-  std::vector<int> colors;
-  colors.push_back( 38 );
-  colors.push_back( 46 );
+  std::vector<int> colors = jseCommon::colors();
 
   std::string profileName(Form("%s_vs_eta", varName.c_str()));
  
@@ -96,8 +94,8 @@ void drawProfileVsEta( const std::string& outdir, std::vector< jseDataset* > dat
   h2_axes->SetYTitle(axisName.c_str());
   h2_axes->Draw();
 
-  TLegend* legend = new TLegend( 0.3, 0.15, 0.7, 0.35 );
-  legend->SetTextSize(0.035);
+  TLegend* legend = new TLegend( 0.3, 0.18, 0.7, 0.35 );
+  legend->SetTextSize(0.03);
   legend->SetFillColor(0);
 
   for( unsigned i=0; i<datasets.size(); ++i ) {
@@ -308,7 +306,8 @@ void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*>
 
     gPad->RedrawAxis();
 
-    c1_reso->SaveAs( Form( "%s/reso_vs_eta_pt%d.eps", outdir.c_str(), iPt ) );
+    if( !noEPS )
+      c1_reso->SaveAs( Form( "%s/reso_vs_eta_pt%d.eps", outdir.c_str(), iPt ) );
     c1_reso->SaveAs( Form( "%s/reso_vs_eta_pt%d.pdf", outdir.c_str(), iPt ) );
 
     delete c1_reso;
