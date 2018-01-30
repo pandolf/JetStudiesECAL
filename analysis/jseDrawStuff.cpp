@@ -14,8 +14,9 @@
 
 
 void drawAllPlots( const std::vector< jseDataset* >& datasets, const std::string& prodName, const std::string& comparisonName );
-void drawProfileVsEta( const std::string& outdir, std::vector< jseDataset* > datasets, const std::string& varName, const std::string& axisName, float yMin, float yMax );
-void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*> datasets, const std::string& suffix="" );
+void drawPlot( const std::string& outdir, const std::vector< jseDataset* >& datasets, const std::string& histoName, const std::string& axisName );
+void drawProfileVsEta( const std::string& outdir, const std::vector< jseDataset* >& datasets, const std::string& varName, const std::string& axisName, float yMin, float yMax );
+void drawResponseResolution( const std::string& outdir, const std::vector<jseDataset*>& datasets, const std::string& suffix="" );
 std::vector<TH1D*> getHistoVector( const std::string& name, const std::vector<float>& ptBins, const std::vector<float>& etaBins );
 TH1D* getTruncatedHisto( TH1D* h1, float frac );
 
@@ -70,6 +71,9 @@ void drawAllPlots( const std::vector< jseDataset* >& datasets, const std::string
   std::string outdir( Form("%s/plots/%s", prodName.c_str(), comparisonName.c_str()) );
   system( Form("mkdir -p %s", outdir.c_str()) );
 
+  drawPlot( outdir, datasets, "nVertex", "Number of Reconstructed Vertexes" );
+  drawPlot( outdir, datasets, "rho", "Pile Up Energy Density #rho [GeV]" );
+
   drawProfileVsEta( outdir, datasets, "phEF", "Jet Photon Energy Fraction", 0., 0.5 );
   drawProfileVsEta( outdir, datasets, "nhEF", "Jet Neutral Hadron Energy Fraction", -0.1, 0.3 );
   drawProfileVsEta( outdir, datasets, "chEF", "Jet Charged Hadron Energy Fraction", 0., 0.85 );
@@ -80,7 +84,56 @@ void drawAllPlots( const std::vector< jseDataset* >& datasets, const std::string
 }
 
 
-void drawProfileVsEta( const std::string& outdir, std::vector< jseDataset* > datasets, const std::string& varName, const std::string& axisName, float yMin, float yMax ) {
+
+void drawPlot( const std::string& outdir, const std::vector< jseDataset* >& datasets, const std::string& histoName, const std::string& axisName ) {
+
+  std::vector<int> colors = jseCommon::colors();
+
+  TCanvas* c1 = new TCanvas("c1", "", 600, 600);
+  c1->cd();
+
+  TPaveText* labelTop = jseCommon::getLabelTopSimulation();
+  labelTop->Draw();
+
+  TLegend* legend = new TLegend( 0.65, 0.7, 0.9, 0.9 );
+  legend->SetTextSize(0.03);
+  legend->SetFillColor(0);
+
+  for( unsigned i=0; i<datasets.size(); ++i ) {
+
+    TH1D* thisHisto = (TH1D*)datasets[i]->file->Get( histoName.c_str() );
+    thisHisto->SetMarkerSize(1.3);
+    thisHisto->SetMarkerStyle(20);
+    thisHisto->SetMarkerColor(colors[i]);
+    thisHisto->SetLineColor(colors[i]);
+    thisHisto->SetXTitle( axisName.c_str() );
+    thisHisto->SetYTitle( "Normalized to Unity" );
+
+    if( i==0 )
+      thisHisto->DrawNormalized("p");
+    else
+      thisHisto->DrawNormalized("p same");
+    legend->AddEntry( thisHisto, datasets[i]->prettyName.c_str() );
+
+  } // for datasets
+
+  legend->Draw("same");
+
+  gPad->RedrawAxis();
+ 
+  if( !noEPS )
+    c1->SaveAs( Form("%s/%s.eps", outdir.c_str(), histoName.c_str()) );
+  c1->SaveAs( Form("%s/%s.pdf", outdir.c_str(), histoName.c_str()) );
+
+  delete c1;
+
+}
+
+
+
+
+
+void drawProfileVsEta( const std::string& outdir, const std::vector< jseDataset* >& datasets, const std::string& varName, const std::string& axisName, float yMin, float yMax ) {
 
 
   std::vector<int> colors = jseCommon::colors();
@@ -95,6 +148,9 @@ void drawProfileVsEta( const std::string& outdir, std::vector< jseDataset* > dat
   h2_axes->SetYTitle(axisName.c_str());
   h2_axes->Draw();
 
+  TPaveText* labelTop = jseCommon::getLabelTopSimulation();
+  labelTop->Draw("same");
+
   TLegend* legend = new TLegend( 0.3, 0.18, 0.7, 0.35 );
   legend->SetTextSize(0.03);
   legend->SetFillColor(0);
@@ -102,10 +158,12 @@ void drawProfileVsEta( const std::string& outdir, std::vector< jseDataset* > dat
   for( unsigned i=0; i<datasets.size(); ++i ) {
 
     TProfile* thisProfile = (TProfile*)datasets[i]->file->Get( profileName.c_str() );
+    thisProfile->SetMarkerSize(1.3);
+    thisProfile->SetMarkerStyle(20);
+    thisProfile->SetMarkerColor(colors[i]);
     thisProfile->SetLineColor(colors[i]);
-    thisProfile->SetLineWidth(2);
 
-    thisProfile->Draw("same");
+    thisProfile->Draw("p same");
     legend->AddEntry( thisProfile, datasets[i]->prettyName.c_str() );
 
   } // for datasets
@@ -125,7 +183,7 @@ void drawProfileVsEta( const std::string& outdir, std::vector< jseDataset* > dat
 
 
 
-void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*> datasets, const std::string& suffix  ) {
+void drawResponseResolution( const std::string& outdir, const std::vector<jseDataset*>& datasets, const std::string& suffix  ) {
 
 
   std::vector<float> ptBins  = jseCommon::ptBins();
