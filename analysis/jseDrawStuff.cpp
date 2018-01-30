@@ -106,28 +106,77 @@ void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*>
   std::vector<float> ptBins  = jseCommon::ptBins();
   std::vector<float> etaBins = jseCommon::etaBins();
 
-  for( unsigned iDataset=0; iDataset<datasets.size(); ++iDataset ) {
+  Double_t etaBins_lower[etaBins.size()];
+  for( unsigned i=0; i<etaBins.size(); ++i ) etaBins_lower[i] = etaBins[i];
 
-    TFile* file = datasets[iDataset]->file;
-
-    std::string respDir( Form("%s/resp/%s", outdir.c_str(), datasets[iDataset]->name.c_str()) );
-    system( Form("mkdir -p %s", respDir.c_str()) );
+  std::vector<int> colors = jseCommon::colors();
 
 
-    std::vector<TH1D*> vh1_resp_vs_eta = getHistoVector( Form("resp%d", iDataset), ptBins, etaBins );
-    std::vector<TH1D*> vh1_reso_vs_eta = getHistoVector( Form("reso%d", iDataset), ptBins, etaBins );
+  for( unsigned iPt=0; iPt<ptBins.size()-1; ++iPt ) {
 
-    for( unsigned iPt=0; iPt<ptBins.size()-1; ++iPt ) {
+
+    std::string ptText( Form("%.0f < p_{T} < %.0f GeV", ptBins[iPt], ptBins[iPt+1]) );
+
+    float xMin = etaBins[0];
+    float xMax = etaBins[etaBins.size()-1];
+
+
+    // prepare response plot
+
+    TCanvas* c1_resp = new TCanvas( "c1_resp", "", 600, 600 );
+    c1_resp->cd();
+
+    TH2D* h2_axes_resp = new TH2D( "axes_resp", "", 10, xMin, xMax, 10, 0.5, 1.1 );
+    h2_axes_resp->SetXTitle( "Jet #eta" );
+    h2_axes_resp->SetYTitle( "Jet Response" );
+    h2_axes_resp->Draw();
+
+    TLine* lineOne = new TLine( xMin, 1., xMax, 1. );
+    lineOne->Draw("same");
+
+    TLegend* legend_resp = new TLegend( 0.3, 0.2, 0.7, 0.4, ptText.c_str() );
+    legend_resp->SetTextSize(0.038);
+    legend_resp->SetFillColor(0);
+
+    // prepare resolution plot
+
+    TCanvas* c1_reso = new TCanvas( "c1_reso", "", 600, 600 );
+    c1_reso->cd();
+
+    TH2D* h2_axes_reso = new TH2D( "axes_reso", "", 10, xMin, xMax, 10, 0., 0.5 );
+    h2_axes_reso->SetXTitle( "Jet #eta" );
+    h2_axes_reso->SetYTitle( "Jet Response" );
+    h2_axes_reso->Draw();
+
+    TLegend* legend_reso = new TLegend( 0.3, 0.7, 0.7, 0.9, ptText.c_str() );
+    legend_reso->SetTextSize(0.038);
+    legend_reso->SetFillColor(0);
+
+
+    for( unsigned iDataset=0; iDataset<datasets.size(); ++iDataset ) {
+
+      TFile* file = datasets[iDataset]->file;
+
+      std::string respDir( Form("%s/resp/%s", outdir.c_str(), datasets[iDataset]->name.c_str()) );
+
+      if( iPt==0 )
+        system( Form("mkdir -p %s", respDir.c_str()) );
+
+
+      TH1D* h1_resp_vs_eta = new TH1D( Form("resp_vs_eta_%s_pt%d", datasets[iDataset]->name.c_str(), iPt), "", etaBins.size()-1, etaBins_lower );
+      TH1D* h1_reso_vs_eta = new TH1D( Form("reso_vs_eta_%s_pt%d", datasets[iDataset]->name.c_str(), iPt), "", etaBins.size()-1, etaBins_lower );
 
       for( unsigned iEta=0; iEta<etaBins.size()-1; ++iEta ) {
 
         std::string thisHistoName( jseCommon::getPtEtaHistoName( "resp", iPt, iEta ) ); 
         TH1D* h1_response = (TH1D*)file->Get( thisHistoName.c_str() );
-        float truncFrac = 0.985;
+        float truncFrac = 0.99;
         TH1D* h1_responseTrunc = getTruncatedHisto( h1_response, truncFrac );
 
         float xMin = h1_response->GetXaxis()->GetXmin();
         float xMax = h1_response->GetXaxis()->GetXmax();
+
+        // first plot
 
         TCanvas* c1 = new TCanvas( "c1", "", 600, 600 );
         c1->cd();
@@ -179,13 +228,69 @@ void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*>
         delete c1;
         delete h2_axes;
         delete legend;
+
+        // end plotting 
+
+        h1_resp_vs_eta->SetBinContent( iEta+1, h1_responseTrunc->GetMean() );
+        h1_resp_vs_eta->SetBinError  ( iEta+1, h1_responseTrunc->GetMeanError() );
+
+        h1_reso_vs_eta->SetBinContent( iEta+1, h1_responseTrunc->GetRMS() );
+        h1_reso_vs_eta->SetBinError  ( iEta+1, h1_responseTrunc->GetRMSError() );
+
         delete h1_responseTrunc;
  
       }  // eta
 
-    } // pt
+      c1_resp->cd();
 
-  } // dataset
+      h1_resp_vs_eta->SetMarkerStyle(20);
+      h1_resp_vs_eta->SetMarkerSize(1.3);
+      h1_resp_vs_eta->SetMarkerColor(colors[iDataset]);
+      h1_resp_vs_eta->SetLineColor(colors[iDataset]);
+      h1_resp_vs_eta->Draw("p same");
+
+      legend_resp->AddEntry( h1_resp_vs_eta, datasets[iDataset]->prettyName.c_str(), "P" );
+
+      c1_reso->cd();
+
+      h1_reso_vs_eta->SetMarkerStyle(20);
+      h1_reso_vs_eta->SetMarkerSize(1.3);
+      h1_reso_vs_eta->SetMarkerColor(colors[iDataset]);
+      h1_reso_vs_eta->SetLineColor(colors[iDataset]);
+      h1_reso_vs_eta->Draw("p same");
+
+      legend_reso->AddEntry( h1_reso_vs_eta, datasets[iDataset]->prettyName.c_str(), "P" );
+
+
+    } // dataset
+
+    c1_resp->cd();
+
+    legend_resp->Draw("same");
+
+
+    gPad->RedrawAxis();
+
+    c1_resp->SaveAs( Form( "%s/resp_vs_eta_pt%d.eps", outdir.c_str(), iPt ) );
+    c1_resp->SaveAs( Form( "%s/resp_vs_eta_pt%d.pdf", outdir.c_str(), iPt ) );
+
+    c1_reso->cd();
+
+    legend_reso->Draw("same");
+
+    gPad->RedrawAxis();
+
+    c1_reso->SaveAs( Form( "%s/reso_vs_eta_pt%d.eps", outdir.c_str(), iPt ) );
+    c1_reso->SaveAs( Form( "%s/reso_vs_eta_pt%d.pdf", outdir.c_str(), iPt ) );
+
+    delete c1_reso;
+    delete c1_resp;
+    delete h2_axes_reso;
+    delete h2_axes_resp;
+
+  } // pt
+
+
 
 }
 
