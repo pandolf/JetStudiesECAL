@@ -121,7 +121,7 @@ std::vector<float> jseCommon::etaBins() {
   etaBins.push_back( -2.0 );
   etaBins.push_back( -1.6 );
   etaBins.push_back( -1.4 );
-  //etaBins.push_back( -1.0 );
+  etaBins.push_back( -1.0 );
   etaBins.push_back( -0.5 );
   etaBins.push_back(  0.0 );
 
