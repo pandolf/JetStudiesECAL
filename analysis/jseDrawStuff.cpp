@@ -20,11 +20,12 @@ std::vector<TH1D*> getHistoVector( const std::string& name, const std::vector<fl
 TH1D* getTruncatedHisto( TH1D* h1, float frac );
 
 
+bool noEPS = false;
 
 int main( int argc, char* argv[] ) {
   
   if( argc<2 ) {
-    std::cout << "Usage: ./jseDrawStuff [productionName]" << std::endl;
+    std::cout << "Usage: ./jseDrawStuff [productionName] [noEPS=false]" << std::endl;
     exit(1);
   }
 
@@ -32,6 +33,13 @@ int main( int argc, char* argv[] ) {
  
   std::string prodName(argv[1]);
 
+  if( argc>2 ) {
+    std::string noEPS_str(argv[2]);
+    if( noEPS_str=="true" || noEPS_str=="True" || noEPS_str=="TRUE" || noEPS_str=="noEPS" || noEPS_str=="fast" ) {
+      noEPS=true;
+      std::cout << "-> Will not save eps files, only PDF." << std::endl;
+    }
+  }
 
   std::vector< jseDataset* > datasets;
   datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SRON" , "SR@PF:ON"  ) );
@@ -107,7 +115,8 @@ void drawProfileVsEta( const std::string& outdir, std::vector< jseDataset* > dat
 
   gPad->RedrawAxis();
  
-  c1->SaveAs( Form("%s/%s.eps", outdir.c_str(), profileName.c_str()) );
+  if( !noEPS )
+    c1->SaveAs( Form("%s/%s.eps", outdir.c_str(), profileName.c_str()) );
   c1->SaveAs( Form("%s/%s.pdf", outdir.c_str(), profileName.c_str()) );
 
   delete c1;
@@ -239,7 +248,8 @@ void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*>
 
         gPad->RedrawAxis();
   
-        c1->SaveAs( Form("%s/resp_pt%d_eta%d.eps", respDir.c_str(), iPt, iEta) );
+        if( !noEPS )
+          c1->SaveAs( Form("%s/resp_pt%d_eta%d.eps", respDir.c_str(), iPt, iEta) );
         c1->SaveAs( Form("%s/resp_pt%d_eta%d.pdf", respDir.c_str(), iPt, iEta) );
 
         delete c1;
@@ -288,7 +298,8 @@ void drawResponseResolution( const std::string& outdir, std::vector<jseDataset*>
 
     gPad->RedrawAxis();
 
-    c1_resp->SaveAs( Form( "%s/resp_vs_eta_pt%d.eps", outdir.c_str(), iPt ) );
+    if( !noEPS )
+      c1_resp->SaveAs( Form( "%s/resp_vs_eta_pt%d.eps", outdir.c_str(), iPt ) );
     c1_resp->SaveAs( Form( "%s/resp_vs_eta_pt%d.pdf", outdir.c_str(), iPt ) );
 
     c1_reso->cd();
