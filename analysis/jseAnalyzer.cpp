@@ -89,6 +89,14 @@ int main( int argc, char* argv[] ) {
   TProfile* hp_hfhadEF_vs_eta = new TProfile( "hfhadEF_vs_eta", "", nBins_eta, -etaMax, etaMax );
   TProfile* hp_hfemEF_vs_eta  = new TProfile( "hfemEF_vs_eta" , "", nBins_eta, -etaMax, etaMax );
 
+  TProfile* hp_chE_vs_eta    = new TProfile( "chE_vs_eta"   , "", nBins_eta, -etaMax, etaMax );
+  TProfile* hp_nhE_vs_eta    = new TProfile( "nhE_vs_eta"   , "", nBins_eta, -etaMax, etaMax );
+  TProfile* hp_phE_vs_eta    = new TProfile( "phE_vs_eta"   , "", nBins_eta, -etaMax, etaMax );
+  TProfile* hp_elE_vs_eta    = new TProfile( "elE_vs_eta"   , "", nBins_eta, -etaMax, etaMax );
+  TProfile* hp_muE_vs_eta    = new TProfile( "muE_vs_eta"   , "", nBins_eta, -etaMax, etaMax );
+  TProfile* hp_hfhadE_vs_eta = new TProfile( "hfhadE_vs_eta", "", nBins_eta, -etaMax, etaMax );
+  TProfile* hp_hfemE_vs_eta  = new TProfile( "hfemE_vs_eta" , "", nBins_eta, -etaMax, etaMax );
+
 
   std::vector<float> ptBins  = jseCommon::ptBins();
   std::vector<float> etaBins = jseCommon::etaBins();
@@ -135,6 +143,14 @@ int main( int argc, char* argv[] ) {
       hp_hfhadEF_vs_eta->Fill( jet_eta[ijet], jet_hfhadEF[ijet] );
       hp_hfemEF_vs_eta ->Fill( jet_eta[ijet], jet_hfemEF[ijet]  );
 
+      hp_chE_vs_eta   ->Fill( jet_eta[ijet], jet_chEF[ijet]    * jet_pt[ijet] );
+      hp_nhE_vs_eta   ->Fill( jet_eta[ijet], jet_nhEF[ijet]    * jet_pt[ijet] );
+      hp_phE_vs_eta   ->Fill( jet_eta[ijet], jet_phEF[ijet]    * jet_pt[ijet] );
+      hp_elE_vs_eta   ->Fill( jet_eta[ijet], jet_elEF[ijet]    * jet_pt[ijet] );
+      hp_muE_vs_eta   ->Fill( jet_eta[ijet], jet_muEF[ijet]    * jet_pt[ijet] );
+      hp_hfhadE_vs_eta->Fill( jet_eta[ijet], jet_hfhadEF[ijet] * jet_pt[ijet] );
+      hp_hfemE_vs_eta ->Fill( jet_eta[ijet], jet_hfemEF[ijet]  * jet_pt[ijet] );
+
 
       std::string histoName = jseCommon::findHistoName( "resp", jet_pt[ijet], jet_eta[ijet] );
       if( map_resp.find(histoName) != map_resp.end() )
@@ -162,6 +178,14 @@ int main( int argc, char* argv[] ) {
   hp_muEF_vs_eta   ->Write();
   hp_hfhadEF_vs_eta->Write();
   hp_hfemEF_vs_eta ->Write();
+
+  hp_chE_vs_eta   ->Write();
+  hp_nhE_vs_eta   ->Write();
+  hp_phE_vs_eta   ->Write();
+  hp_elE_vs_eta   ->Write();
+  hp_muE_vs_eta   ->Write();
+  hp_hfhadE_vs_eta->Write();
+  hp_hfemE_vs_eta ->Write();
 
   for( std::map<std::string,TH1D*>::const_iterator iresp=map_resp.begin(); iresp!=map_resp.end(); ++iresp )
     iresp->second->Write();
