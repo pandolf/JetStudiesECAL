@@ -80,6 +80,10 @@ void drawAllPlots( const std::vector< jseDataset* >& datasets, const std::string
   drawProfileVsEta( outdir, datasets, "nhEF", "Jet Neutral Hadron Energy Fraction", -0.1, 0.3 );
   drawProfileVsEta( outdir, datasets, "chEF", "Jet Charged Hadron Energy Fraction", 0., 0.85 );
 
+  drawProfileVsEta( outdir, datasets, "phE", "Jet Photon Energy [GeV]", 0., 100. );
+  drawProfileVsEta( outdir, datasets, "nhE", "Jet Neutral Hadron Energy [GeV]", 0., 30. );
+  drawProfileVsEta( outdir, datasets, "chE", "Jet Charged Hadron Energy [GeV]", 0., 150. );
+
   drawResponseResolution( outdir, datasets );
   drawResponseResolution( outdir, datasets, "Raw" );
 
@@ -153,7 +157,7 @@ void drawProfileVsEta( const std::string& outdir, const std::vector< jseDataset*
   TPaveText* labelTop = jseCommon::getLabelTopSimulation();
   labelTop->Draw("same");
 
-  TLegend* legend = new TLegend( 0.3, 0.18, 0.7, 0.35 );
+  TLegend* legend = new TLegend( 0.35, 0.18, 0.7, 0.35 );
   legend->SetTextSize(0.03);
   legend->SetFillColor(0);
 
@@ -513,8 +517,6 @@ void drawResponseResolution( const std::string& outdir, const std::vector<jseDat
       c1_resoFit->SaveAs( Form( "%s/resoFit%s_vs_eta_pt%d.eps", outdir.c_str(), suffix.c_str(), iPt ) );
     c1_resoFit->SaveAs( Form( "%s/resoFit%s_vs_eta_pt%d.pdf", outdir.c_str(), suffix.c_str(), iPt ) );
 
-
-    exit(0);
 
     delete c1_reso;
     delete c1_resp;
