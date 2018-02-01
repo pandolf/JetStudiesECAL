@@ -45,21 +45,26 @@ int main( int argc, char* argv[] ) {
   }
 
   std::vector< jseDataset* > datasets;
-  datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SRON" , "SR:ON"  ) );
-  datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF", "SR:OFF" ) );
+  datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SRON_noPU" , "SR@PF:ON (noPU)"  ) );
+  datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF_noPU", "SR@PF:OFF (noPU)" ) );
 
-  drawAllPlots( datasets, prodName, "SRON_vs_SROFF" );
+  drawAllPlots( datasets, prodName, "SRON_vs_SROFF_noPU" );
+
+  std::vector< jseDataset* > datasets1;
+  datasets1.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SRON" , "SR@PF:ON"  ) );
+  datasets1.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF", "SR@PF:OFF" ) );
+
+  drawAllPlots( datasets1, prodName, "SRON_vs_SROFF" );
 
   std::vector< jseDataset* > datasets2;
-  datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF", "SR:OFF"  ) );
-  datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF_noPU", "SR:OFF noPU" ) );
+  datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF", "SR@PF:OFF"  ) );
+  datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF_noPU", "SR@PF:OFF noPU" ) );
 
   drawAllPlots( datasets2, prodName, "PU_vs_noPU" );
 
   std::vector< jseDataset* > datasets3;
-  datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SRON", "ECALnoise:OFF SR:ON") );
-  datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SROFF", "ECALnoise:OFF SR:OFF") );
-  datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SROFF_noPU", "ECALnoise:OFF SR:OFF noPU") );
+  datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF_noPU", "SR@PF:OFF (noPU)") );
+  datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SROFF_noPU", "ECALnoise:OFF SR@PF:OFF (noPU)") );
 
   drawAllPlots( datasets3, prodName, "ECALnoiseOFF" );
 
