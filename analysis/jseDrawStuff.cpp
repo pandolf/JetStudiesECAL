@@ -63,8 +63,8 @@ int main( int argc, char* argv[] ) {
   drawAllPlots( datasets2, prodName, "PU_vs_noPU" );
 
   std::vector< jseDataset* > datasets3;
-  datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF_noPU", "SR@PF:OFF (noPU)") );
-  datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SROFF_noPU", "ECALnoise:OFF SR@PF:OFF (noPU)") );
+  datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF_noPU", "SR:OFF (noPU)") );
+  datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SROFF_noPU", "ECALnoise:OFF SR:OFF (noPU)") );
 
   drawAllPlots( datasets3, prodName, "ECALnoiseOFF" );
 
