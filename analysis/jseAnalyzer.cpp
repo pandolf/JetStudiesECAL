@@ -54,9 +54,9 @@ int main( int argc, char* argv[] ) {
   tree->SetBranchAddress("jet_puId", jet_puId );
 
   float jet_chEF[999];
-  tree->SetBranchAddress("jet_chEF", jet_chEF );
+  tree->SetBranchAddress("jet_chHEF", jet_chEF );
   float jet_nhEF[999];
-  tree->SetBranchAddress("jet_nhEF", jet_nhEF );
+  tree->SetBranchAddress("jet_neHEF", jet_nhEF );
   float jet_phEF[999];
   tree->SetBranchAddress("jet_phEF", jet_phEF );
   float jet_elEF[999];

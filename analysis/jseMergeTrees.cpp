@@ -12,15 +12,17 @@
 
 int main( int argc, char* argv[] ) {
 
-  if( argc<3 ) {
-    std::cout << "Usage: ./jseMergeTrees [productionName] [datasetName]" << std::endl;
+  if( argc<4 ) {
+    std::cout << "Usage: ./jseMergeTrees [version] [productionName] [datasetName]" << std::endl;
     exit(1);
   }
 
-  std::string prodName(argv[1]);
-  std::string datasetName(argv[2]);
+  std::string cmsswVersion(argv[1]);
+  std::string prodName(argv[2]);
+  std::string datasetName(argv[3]);
 
-  std::string path("/eos/cms/store/user/pandolf/JetStudiesECAL/94X/");
+  std::string path("/eos/cms/store/group/phys_higgs/pandolf/JetStudiesECAL/");
+  //std::string path("/eos/cms/store/user/pandolf/JetStudiesECAL/");
 
 
   TChain* chain = new TChain("mt2");
@@ -31,7 +33,7 @@ int main( int argc, char* argv[] ) {
   //chain->Add( Form( "%s/%s/%s_Chunk*/mt2.root/mt2", path.c_str(), prodName.c_str(), datasets[iDataset].c_str()) );
   for( unsigned iChunk=0; iChunk<26; ++iChunk ) {
 
-    std::string chunkName( Form( "%s/%s/%s_Chunk%d/mt2.root/mt2", path.c_str(), prodName.c_str(), datasetName.c_str(), iChunk) );
+    std::string chunkName( Form( "%s/%s/%s/%s_Chunk%d/mt2.root/mt2", path.c_str(), cmsswVersion.c_str(), prodName.c_str(), datasetName.c_str(), iChunk) );
     std::cout << "   Adding: " << chunkName << std::endl;
 
     chain->Add( chunkName.c_str() );
@@ -54,8 +56,8 @@ int main( int argc, char* argv[] ) {
   chain->SetBranchStatus("jet_id"    , 1);
   chain->SetBranchStatus("jet_puId"  , 1);
 
-  chain->SetBranchStatus("jet_chEF"  , 1);
-  chain->SetBranchStatus("jet_nhEF"  , 1);
+  chain->SetBranchStatus("jet_chHEF" , 1);
+  chain->SetBranchStatus("jet_neHEF" , 1);
   chain->SetBranchStatus("jet_phEF"  , 1);
   chain->SetBranchStatus("jet_eEF"   , 1);
   chain->SetBranchStatus("jet_muEF"  , 1);
