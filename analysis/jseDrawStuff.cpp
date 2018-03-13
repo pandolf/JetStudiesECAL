@@ -15,8 +15,8 @@
 
 
 void drawAllPlots( const std::vector< jseDataset* >& datasets, const std::string& prodName, const std::string& comparisonName );
-void drawPlot( const std::string& outdir, const std::vector< jseDataset* >& datasets, const std::string& histoName, const std::string& axisName );
-void drawProfileVsEta( const std::string& outdir, const std::vector< jseDataset* >& datasets, const std::string& varName, const std::string& axisName, float yMin, float yMax );
+void drawPlot( const std::string& outdir, const std::vector< jseDataset* >& datasets, const std::string& histoName, const std::string& axisName, bool log_aussi=false );
+void drawProfileVsEta( const std::string& outdir, const std::vector< jseDataset* >& datasets, const std::string& varName, const std::string& axisName, float yMin, float yMax, int iPt=-1 );
 void drawResponseResolution( const std::string& outdir, const std::vector<jseDataset*>& datasets, const std::string& suffix="" );
 TF1* fitResponse( TH1D* h1 );
 std::vector<TH1D*> getHistoVector( const std::string& name, const std::vector<float>& ptBins, const std::vector<float>& etaBins );
@@ -44,48 +44,85 @@ int main( int argc, char* argv[] ) {
     }
   }
 
-  std::vector< jseDataset* > datasets2;
-  datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13_0fb" , "0 fb^{-1}"  ) );
-  datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13_30fb", "30 fb^{-1}" ) );
-  datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13_60fb", "60 fb^{-1}" ) );
 
-  drawAllPlots( datasets2, prodName, "PU" );
+  if( prodName=="feb20_v1" ) {
 
-  std::vector< jseDataset* > datasets;
-  datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13_noPU_0fb" , "0 fb^{-1} (noPU)"  ) );
-  datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13_noPU_30fb", "30 fb^{-1} (noPU)" ) );
-  datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13_noPU_60fb", "60 fb^{-1} (noPU)" ) );
+    std::vector< jseDataset* > datasets;
+    datasets.push_back( new jseDataset( prodName, "RelValZEE_rel2007_GTv4", "2007" ) );
+    datasets.push_back( new jseDataset( prodName, "RelValZEE_rel2008_GTv4", "2008" ) );
 
-  drawAllPlots( datasets, prodName, "noPU" );
+    drawAllPlots( datasets, prodName, "rel" );
 
+    std::vector< jseDataset* > datasets2;
+    datasets2.push_back( new jseDataset( prodName, "RelValZEE_rel2008_GTv4", "GTv4" ) );
+    datasets2.push_back( new jseDataset( prodName, "RelValZEE_rel2008_GTv7", "GTv7" ) );
 
-//std::vector< jseDataset* > datasets;
-//datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SRON_noPU" , "SR@PF:ON (noPU)"  ) );
-//datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF_noPU", "SR@PF:OFF (noPU)" ) );
+    drawAllPlots( datasets2, prodName, "GT" );
 
-//drawAllPlots( datasets, prodName, "SRON_vs_SROFF_noPU" );
+  } else if( prodName=="feb15_v3" ) {
 
-//std::vector< jseDataset* > datasets1;
-//datasets1.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SRON" , "SR@PF:ON"  ) );
-//datasets1.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF", "SR@PF:OFF" ) );
+    std::vector< jseDataset* > datasets;
+    datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13_noPU_0fb" , "0 fb^{-1} (noPU)" ) );
+    datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13_noPU_30fb", "30 fb^{-1} (noPU)") );
+    datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13_noPU_60fb", "60 fb^{-1} (noPU)") );
 
-//drawAllPlots( datasets1, prodName, "SRON_vs_SROFF" );
+    drawAllPlots( datasets, prodName, "noPU" );
 
-//std::vector< jseDataset* > datasets2;
-//datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF", "SR@PF:OFF"  ) );
-//datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF_noPU", "SR@PF:OFF noPU" ) );
+    std::vector< jseDataset* > datasets2;
+    datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13_0fb" , "0 fb^{-1}" ) );
+    datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13_30fb", "30 fb^{-1}") );
+    datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13_60fb", "60 fb^{-1}") );
 
-//drawAllPlots( datasets2, prodName, "PU_vs_noPU" );
+    drawAllPlots( datasets2, prodName, "PU" );
 
-//std::vector< jseDataset* > datasets3;
-//datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF_noPU", "SR:OFF (noPU)") );
-//datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SROFF_noPU", "ECALnoise:OFF SR:OFF (noPU)") );
+  } else if( prodName=="feb7_v1" ) {
 
-//drawAllPlots( datasets3, prodName, "ECALnoiseOFF" );
+    std::vector< jseDataset* > datasets;
+    datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SRON_noPU" , "SR@PF:ON (noPU)"  ) );
+    datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF_noPU", "SR@PF:OFF (noPU)" ) );
+    
+    drawAllPlots( datasets, prodName, "SRON_vs_SROFF_noPU" );
+    
+    std::vector< jseDataset* > datasets1;
+    datasets1.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SRON" , "SR@PF:ON"  ) );
+    datasets1.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF", "SR@PF:OFF" ) );
+    
+    drawAllPlots( datasets1, prodName, "SRON_vs_SROFF" );
+    
+    std::vector< jseDataset* > datasets2;
+    datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF", "SR@PF:OFF"  ) );
+    datasets2.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF_noPU", "SR@PF:OFF noPU" ) );
+    
+    drawAllPlots( datasets2, prodName, "PU_vs_noPU" );
+    
+    std::vector< jseDataset* > datasets3;
+    datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_SROFF_noPU", "SR:OFF (noPU)") );
+    datasets3.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13UP17_GRv2_ECALnoiseOFF_SROFF_noPU", "ECALnoise:OFF SR:OFF (noPU)") );
+    
+    drawAllPlots( datasets3, prodName, "ECALnoiseOFF" );
+
+  } else if( prodName=="mar9_v0" ) {
+
+    std::vector< jseDataset* > datasets;
+    datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000_PFthA_noPU", "Thresh = 2.0 #sigma_{Noise} (noPU)"  ) );
+    datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000_PFthB_noPU", "Thresh = 1.0 #sigma_{Noise} (noPU)" ) );
+    datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000_PFthC_noPU", "Thresh = 0.5 #sigma_{Noise} (noPU)" ) );
+    //datasets.push_back( new jseDataset( prodName, "RelValQCD_FlatPt_15_3000HS_13_noPU_30fb", "Baseline 30 fb^{-1} (noPU)" ) );
+    
+    drawAllPlots( datasets, prodName, "PFth_noPU" );
+    
+
+  } else {
+
+    std::cout << "-> Unknown prodName: '" << prodName << "'. Exiting." << std::endl;
+    exit(11);
+  
+  }
 
   return 0;
 
 }
+
 
 
 void drawAllPlots( const std::vector< jseDataset* >& datasets, const std::string& prodName, const std::string& comparisonName ) {
@@ -96,13 +133,38 @@ void drawAllPlots( const std::vector< jseDataset* >& datasets, const std::string
   drawPlot( outdir, datasets, "nVertex", "Number of Reconstructed Vertexes" );
   drawPlot( outdir, datasets, "rho", "Pile Up Energy Density #rho [GeV]" );
 
-  drawProfileVsEta( outdir, datasets, "phEF", "Jet Photon Energy Fraction", 0., 0.85 );
-  drawProfileVsEta( outdir, datasets, "nhEF", "Jet Neutral Hadron Energy Fraction", -0.1, 0.5 );
-  drawProfileVsEta( outdir, datasets, "chEF", "Jet Charged Hadron Energy Fraction", 0., 0.85 );
+  drawPlot( outdir, datasets, "pt" , "Jet p_{T} [GeV]", true );
+  drawPlot( outdir, datasets, "eta", "Jet #eta" );
 
-  drawProfileVsEta( outdir, datasets, "phE", "Jet Photon Energy [GeV]", 0., 100. );
-  drawProfileVsEta( outdir, datasets, "nhE", "Jet Neutral Hadron Energy [GeV]", 0., 50. );
-  drawProfileVsEta( outdir, datasets, "chE", "Jet Charged Hadron Energy [GeV]", 0., 150. );
+  drawProfileVsEta( outdir, datasets, "phEF", "Jet Photon Energy Fraction"        ,   0., 0.85 );
+  drawProfileVsEta( outdir, datasets, "nhEF", "Jet Neutral Hadron Energy Fraction", -0.1, 0.5  );
+  drawProfileVsEta( outdir, datasets, "chEF", "Jet Charged Hadron Energy Fraction",   0., 0.85 );
+
+  drawProfileVsEta( outdir, datasets, "phE", "Jet Photon Energy [GeV]"            , 0.  , 100. );
+  drawProfileVsEta( outdir, datasets, "nhE", "Jet Neutral Hadron Energy [GeV]"    , 0.  , 50.  );
+  drawProfileVsEta( outdir, datasets, "chE", "Jet Charged Hadron Energy [GeV]"    , 0.  , 150. );
+
+  drawProfileVsEta( outdir, datasets, "phMult", "Jet Photon Multiplicity"         , 0.  , 25.  );
+  drawProfileVsEta( outdir, datasets, "nhMult", "Jet Neutral Hadron Multiplicity" , 0.  , 3.5  );
+  drawProfileVsEta( outdir, datasets, "chMult", "Jet Charged Hadron Multiplicity" , 0.  , 20.  );
+
+  std::vector<float> ptBins = jseCommon::ptBins();
+
+  for( unsigned iPt=0; iPt<ptBins.size()-1; ++iPt ) {
+
+    drawProfileVsEta( outdir, datasets, "phEF", "Jet Photon Energy Fraction"        ,   0., 0.85, iPt );
+    drawProfileVsEta( outdir, datasets, "nhEF", "Jet Neutral Hadron Energy Fraction",   0., 0.85, iPt );
+    drawProfileVsEta( outdir, datasets, "chEF", "Jet Charged Hadron Energy Fraction",   0., 0.85, iPt );
+
+    drawProfileVsEta( outdir, datasets, "phE", "Jet Photon Energy [GeV]"            , 0.  , ptBins[iPt]   , iPt );
+    drawProfileVsEta( outdir, datasets, "nhE", "Jet Neutral Hadron Energy [GeV]"    , 0.  , TMath::Min(ptBins[iPt+1], 500.) , iPt );
+    drawProfileVsEta( outdir, datasets, "chE", "Jet Charged Hadron Energy [GeV]"    , 0.  , ptBins[iPt]   , iPt );
+
+    drawProfileVsEta( outdir, datasets, "phMult", "Jet Photon Multiplicity"         , 0.  , 8.5 + ptBins[iPt]/10. , iPt );
+    drawProfileVsEta( outdir, datasets, "nhMult", "Jet Neutral Hadron Multiplicity" , 0.  , 2.0 + 0.4*iPt , iPt );
+    drawProfileVsEta( outdir, datasets, "chMult", "Jet Charged Hadron Multiplicity" , 0.  , 8.0 + 2.0*iPt , iPt );
+
+  } // for ipt
 
   drawResponseResolution( outdir, datasets );
   drawResponseResolution( outdir, datasets, "Raw" );
@@ -111,7 +173,7 @@ void drawAllPlots( const std::vector< jseDataset* >& datasets, const std::string
 
 
 
-void drawPlot( const std::string& outdir, const std::vector< jseDataset* >& datasets, const std::string& histoName, const std::string& axisName ) {
+void drawPlot( const std::string& outdir, const std::vector< jseDataset* >& datasets, const std::string& histoName, const std::string& axisName, bool log_aussi ) {
 
   std::vector<int> colors = jseCommon::colors();
 
@@ -151,6 +213,13 @@ void drawPlot( const std::string& outdir, const std::vector< jseDataset* >& data
     c1->SaveAs( Form("%s/%s.eps", outdir.c_str(), histoName.c_str()) );
   c1->SaveAs( Form("%s/%s.pdf", outdir.c_str(), histoName.c_str()) );
 
+  if( log_aussi ) {
+    c1->SetLogy();
+    if( !noEPS )
+      c1->SaveAs( Form("%s/%s_log.eps", outdir.c_str(), histoName.c_str()) );
+    c1->SaveAs( Form("%s/%s_log.pdf", outdir.c_str(), histoName.c_str()) );
+  }
+
   delete c1;
 
 }
@@ -159,12 +228,20 @@ void drawPlot( const std::string& outdir, const std::vector< jseDataset* >& data
 
 
 
-void drawProfileVsEta( const std::string& outdir, const std::vector< jseDataset* >& datasets, const std::string& varName, const std::string& axisName, float yMin, float yMax ) {
+void drawProfileVsEta( const std::string& outdir, const std::vector< jseDataset* >& datasets, const std::string& varName, const std::string& axisName, float yMin, float yMax, int iPt ) {
 
 
   std::vector<int> colors = jseCommon::colors();
+  std::vector<float> ptBins  = jseCommon::ptBins();
 
-  std::string profileName(Form("%s_vs_eta", varName.c_str()));
+
+  std::string profileName;
+  if( iPt>=0 ) {
+    profileName = std::string(Form("%s_vs_eta_pt%d", varName.c_str(), iPt));
+  } else {
+    profileName = std::string(Form("%s_vs_eta", varName.c_str()));
+  }
+
  
   TCanvas* c1 = new TCanvas("c1", "", 600, 600);
   c1->cd();
@@ -177,7 +254,30 @@ void drawProfileVsEta( const std::string& outdir, const std::vector< jseDataset*
   TPaveText* labelTop = jseCommon::getLabelTopSimulation();
   labelTop->Draw("same");
 
-  TLegend* legend = new TLegend( 0.35, 0.18, 0.7, 0.35 );
+
+  std::string ptText;
+  if( iPt>=0 ) {
+    ptText = std::string( Form("%.0f < p_{T} < %.0f GeV", ptBins[iPt], ptBins[iPt+1]) );
+  } else {
+    ptText = std::string( Form("p_{T} > %.0f GeV", ptBins[0]) );
+  }
+
+  float xMin_leg = 0.35;
+  float yMin_leg = 0.18;
+  float xMax_leg = 0.70;
+  float yMax_leg = 0.40;
+
+  if( varName == "nhE" || varName == "phE" || varName == "nhEF" || varName == "phEF" ) {
+
+    xMin_leg = 0.35;
+    yMin_leg = 0.70;
+    xMax_leg = 0.70;
+    yMax_leg = 0.92;
+ 
+  }
+
+
+  TLegend* legend = new TLegend( xMin_leg, yMin_leg, xMax_leg, yMax_leg, ptText.c_str() );
   legend->SetTextSize(0.03);
   legend->SetFillColor(0);
 
@@ -238,9 +338,15 @@ void drawResponseResolution( const std::string& outdir, const std::vector<jseDat
     TCanvas* c1_resp = new TCanvas( "c1_resp", "", 600, 600 );
     c1_resp->cd();
 
-    TH2D* h2_axes_resp = new TH2D( "axes_resp", "", 10, xMin, xMax, 10, 0.75, 1.3 );
+    float yMinResp = 0.75;
+    float yMaxResp = 1.3;
+
+    TH2D* h2_axes_resp = new TH2D( "axes_resp", "", 10, xMin, xMax, 10, yMinResp, yMaxResp );
     h2_axes_resp->SetXTitle( "Jet #eta" );
-    h2_axes_resp->SetYTitle( "Jet Response" );
+    if( suffix=="Raw" )
+      h2_axes_resp->SetYTitle( "Jet Raw Response" );
+    else
+      h2_axes_resp->SetYTitle( "Jet Response" );
     h2_axes_resp->Draw();
 
     TLine* lineOne = new TLine( xMin, 1., xMax, 1. );
@@ -261,9 +367,12 @@ void drawResponseResolution( const std::string& outdir, const std::vector<jseDat
     TCanvas* c1_respFit = new TCanvas( "c1_respFit", "", 600, 600 );
     c1_respFit->cd();
 
-    TH2D* h2_axes_respFit = new TH2D( "axes_respFit", "", 10, xMin, xMax, 10, 0.75, 1.3 );
+    TH2D* h2_axes_respFit = new TH2D( "axes_respFit", "", 10, xMin, xMax, 10, yMinResp, yMaxResp );
     h2_axes_respFit->SetXTitle( "Jet #eta" );
-    h2_axes_respFit->SetYTitle( "Jet Response (fit)" );
+    if( suffix=="Raw" )
+      h2_axes_respFit->SetYTitle( "Jet Raw Response (fit)" );
+    else
+      h2_axes_respFit->SetYTitle( "Jet Response (fit)" );
     h2_axes_respFit->Draw();
 
     labelTop->Draw("same");
@@ -279,6 +388,10 @@ void drawResponseResolution( const std::string& outdir, const std::vector<jseDat
     TH2D* h2_axes_reso = new TH2D( "axes_reso", "", 10, xMin, xMax, 10, 0., 0.5 );
     h2_axes_reso->SetXTitle( "Jet #eta" );
     h2_axes_reso->SetYTitle( "Jet Resolution" );
+    if( suffix=="Raw" )
+      h2_axes_reso->SetYTitle( "Jet Raw Resolution" );
+    else
+      h2_axes_reso->SetYTitle( "Jet Resolution" );
     h2_axes_reso->Draw();
 
     labelTop->Draw("same");
@@ -295,7 +408,10 @@ void drawResponseResolution( const std::string& outdir, const std::vector<jseDat
 
     TH2D* h2_axes_resoFit = new TH2D( "axes_resoFit", "", 10, xMin, xMax, 10, 0., 0.5 );
     h2_axes_resoFit->SetXTitle( "Jet #eta" );
-    h2_axes_resoFit->SetYTitle( "Jet Resolution (fit)" );
+    if( suffix=="Raw" )
+      h2_axes_resoFit->SetYTitle( "Jet Raw Resolution (fit)" );
+    else
+      h2_axes_resoFit->SetYTitle( "Jet Resolution (fit)" );
     h2_axes_resoFit->Draw();
 
     labelTop->Draw("same");
@@ -319,10 +435,10 @@ void drawResponseResolution( const std::string& outdir, const std::vector<jseDat
 
       for( unsigned iEta=0; iEta<etaBins.size()-1; ++iEta ) {
 
-        std::string thisHistoName( jseCommon::getPtEtaHistoName( Form("resp%s", suffix.c_str()), iPt, iEta ) ); 
+        std::string thisHistoName( jseCommon::getHistoName( Form("resp%s", suffix.c_str()), iPt, iEta ) ); 
         TH1D* h1_response = (TH1D*)file->Get( thisHistoName.c_str() );
         if( h1_response==0 ) continue;
-        if( h1_response->GetEntries()==0 ) continue;
+        if( h1_response->GetEntries()<5 ) continue;
         float truncFrac = 0.99;
         TH1D* h1_responseTrunc = getTruncatedHisto( h1_response, truncFrac );
 
