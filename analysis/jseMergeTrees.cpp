@@ -64,6 +64,14 @@ int main( int argc, char* argv[] ) {
   chain->SetBranchStatus("jet_HFHEF" , 1);
   chain->SetBranchStatus("jet_HFEMEF", 1);
 
+  chain->SetBranchStatus("jet_chHMult" , 1);
+  chain->SetBranchStatus("jet_neHMult" , 1);
+  chain->SetBranchStatus("jet_phMult"  , 1);
+  chain->SetBranchStatus("jet_eMult"   , 1);
+  chain->SetBranchStatus("jet_muMult"  , 1);
+  chain->SetBranchStatus("jet_HFHMult" , 1);
+  chain->SetBranchStatus("jet_HFEMMult", 1);
+
 
   std::string outdir( Form("%s/miniTrees", prodName.c_str()) );
   system( Form("mkdir -p %s", outdir.c_str()) );
