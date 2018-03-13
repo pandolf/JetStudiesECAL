@@ -25,11 +25,16 @@ class jseCommon {
 
   static std::vector<float> ptBins();
   static std::vector<float> etaBins();
+  static std::vector<float> phiBins();
 
-  static std::string getPtEtaHistoName( const std::string& name, int ptBin, int etaBin );
-  //static std::string getPtEtaHistoName( const std::string& name, float ptMin, float ptMax, float etaMin, float etaMax );
-  static std::string etaText( float eta );
+  static std::string getHistoName( const std::string& name, int ptBin, int etaBin );
+  static std::string getHistoName( const std::string& name, int ptBin, int etaBin, int phiBin );
+  static std::string getProfileVsEtaName( const std::string& name, int ptBin );
+
   static std::string findHistoName( const std::string& name, float pt, float eta );
+  static std::string findHistoName( const std::string& name, float pt, float eta, float phi );
+
+  static std::string etaText( float eta );
   static int findBin( float value, const std::vector<float> bins, bool overflow=true );
   static void symmetrize( std::vector<float>& vec );
 

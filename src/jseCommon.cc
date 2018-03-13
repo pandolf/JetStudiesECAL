@@ -133,6 +133,19 @@ std::vector<float> jseCommon::etaBins() {
 }
 
 
+std::vector<float> jseCommon::phiBins() {
+
+  std::vector<float> phiBins;
+
+  for( float phi=0.; phi<3.2; phi+=0.2 ){
+    phiBins.push_back( phi );
+  }
+
+  return phiBins;
+
+}
+
+
 void jseCommon::symmetrize( std::vector<float>& vec ) {
 
   std::vector<float> initialVector = vec;
@@ -150,18 +163,34 @@ void jseCommon::symmetrize( std::vector<float>& vec ) {
 }
 
 
-//std::string jseCommon::getPtEtaHistoName( const std::string& name, float ptMin, float ptMax, float etaMin, float etaMax ) {
+//std::string jseCommon::getHistoName( const std::string& name, float ptMin, float ptMax, float etaMin, float etaMax ) {
 //
 //  return std::string( Form( "%s_pt%dto%d_eta%sto%s", name.c_str(), (int)ptMin, (int)ptMax, jseCommon::etaText(etaMin).c_str(), jseCommon::etaText(etaMax).c_str()) );
 //
 //}
 
 
-std::string jseCommon::getPtEtaHistoName( const std::string& name, int ptBin, int etaBin ) {
+std::string jseCommon::getHistoName( const std::string& name, int ptBin, int etaBin ) {
 
   return std::string( Form( "%s_pt%d_eta%d", name.c_str(), ptBin, etaBin) );
 
 }
+
+
+std::string jseCommon::getHistoName( const std::string& name, int ptBin, int etaBin, int phiBin ) {
+
+  return std::string( Form( "%s_pt%d_eta%d_phi%d", name.c_str(), ptBin, etaBin, phiBin) );
+
+}
+
+
+
+std::string jseCommon::getProfileVsEtaName( const std::string& name, int ptBin ) {
+
+  return std::string( Form( "%s_vs_eta_pt%d", name.c_str(), ptBin) );
+
+}
+
 
 
 std::string jseCommon::etaText( float eta ) {
@@ -182,7 +211,22 @@ std::string jseCommon::findHistoName( const std::string& name, float pt, float e
   int ptBin  = findBin( pt , ptBins );
   int etaBin = findBin( eta, etaBins, false );
 
-  return jseCommon::getPtEtaHistoName( name, ptBin, etaBin );
+  return jseCommon::getHistoName( name, ptBin, etaBin );
+   
+}
+
+
+std::string jseCommon::findHistoName( const std::string& name, float pt, float eta, float phi ) {
+
+  std::vector<float> ptBins  = jseCommon::ptBins();
+  std::vector<float> etaBins = jseCommon::etaBins();
+  std::vector<float> phiBins = jseCommon::phiBins();
+
+  int ptBin  = findBin( pt , ptBins );
+  int etaBin = findBin( eta, etaBins, false );
+  int phiBin = findBin( phi, phiBins, false );
+
+  return jseCommon::getHistoName( name, ptBin, etaBin, phiBin );
    
 }
 
@@ -195,7 +239,7 @@ std::string jseCommon::findHistoName( const std::string& name, float pt, float e
 //  int ptBin  = findBin( pt , ptBins );
 //  int etaBin = findBin( eta, etaBins, false );
 //
-//  return jseCommon::getPtEtaHistoName( name, ptBins[ptBin], ptBins[ptBin+1], etaBins[etaBin], etaBins[etaBin+1] );
+//  return jseCommon::getHistoName( name, ptBins[ptBin], ptBins[ptBin+1], etaBins[etaBin], etaBins[etaBin+1] );
 //   
 //}
 
