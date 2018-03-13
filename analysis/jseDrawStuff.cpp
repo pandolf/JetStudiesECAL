@@ -157,7 +157,7 @@ void drawAllPlots( const std::vector< jseDataset* >& datasets, const std::string
     drawProfileVsEta( outdir, datasets, "chEF", "Jet Charged Hadron Energy Fraction",   0., 0.85, iPt );
 
     drawProfileVsEta( outdir, datasets, "phE", "Jet Photon Energy [GeV]"            , 0.  , ptBins[iPt]   , iPt );
-    drawProfileVsEta( outdir, datasets, "nhE", "Jet Neutral Hadron Energy [GeV]"    , 0.  , TMath::Min(ptBins[iPt+1], 500.) , iPt );
+    drawProfileVsEta( outdir, datasets, "nhE", "Jet Neutral Hadron Energy [GeV]"    , 0.  , TMath::Min(0.9*ptBins[iPt+1], 500.) , iPt );
     drawProfileVsEta( outdir, datasets, "chE", "Jet Charged Hadron Energy [GeV]"    , 0.  , ptBins[iPt]   , iPt );
 
     drawProfileVsEta( outdir, datasets, "phMult", "Jet Photon Multiplicity"         , 0.  , 8.5 + ptBins[iPt]/10. , iPt );
