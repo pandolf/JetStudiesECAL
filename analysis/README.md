@@ -1,3 +1,0 @@
-- first checkout CMGTools: https://twiki.cern.ch/twiki/bin/viewauth/CMS/CMGToolsReleasesExperimental
-- then source JetStudiesECAL/cmg_stuff/copyToCMG.sh
-- then go to CMGTools and create the ntuples
